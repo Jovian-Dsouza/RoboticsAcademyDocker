@@ -14,8 +14,27 @@ help: ## This help.
 
 .DEFAULT_GOAL := help
 
+radi: ## Build RADI 
+	docker build -t radi:melodic RADI/
+	@printf "\n\033[92mDocker Image: radi:melodic\033[0m\n"
+
+run_radi : ## Run RADI
+	xhost +
+	docker run -it --rm \
+	-e DISPLAY=${DISPLAY} \
+	-v ${XSOCK}:${XSOCK} \
+	-v ${HOME}/.Xauthority:/root/.Xauthority \
+	--privileged  --net=host --gpus all \
+	-v ${PWD}/home:/root/home \
+	--name radi_melodic \
+	radi:melodic
+
+exec_radi : ## Exec RADI
+	xhost +
+	docker exec -it radi_melodic /bin/bash
+
 pick_place: ## Build Pick Place
-	docker build -t academy:pick_place exercise/pick_place/
+	docker build -t academy:pick_place RADI/
 	@printf "\n\033[92mDocker Image: academy:pick_place\033[0m\n"
 
 run_pick_place : ## [NVIDIA] Run Pick Place
@@ -36,6 +55,18 @@ run_drone_cat_mouse : ## [NVIDIA] Run cat mouse
 	-v ${XSOCK}:${XSOCK} \
 	-v ${HOME}/.Xauthority:/root/.Xauthority \
 	--privileged  --net=host --gpus all \
+	-v ${PWD}/home:/root/dockerHome \
+	--name academy_drone_cat_mouse \
+	docker_academy:latest /bin/bash
+	@printf "\n\033[92mDocker Image: academy:pick_place\033[0m\n"
+
+run_drone_cat_mouse_cpu : ## [CPU] Run cat mouse
+	xhost +
+	docker run -it --rm \
+	-e DISPLAY=${DISPLAY} \
+	-v ${XSOCK}:${XSOCK} \
+	-v ${HOME}/.Xauthority:/root/.Xauthority \
+	--net=host \
 	-v ${PWD}/home:/root/dockerHome \
 	--name academy_drone_cat_mouse \
 	docker_academy:latest /bin/bash
