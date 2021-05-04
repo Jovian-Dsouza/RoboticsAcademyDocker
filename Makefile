@@ -24,9 +24,10 @@ run_radi : ## Run RADI
 	-e DISPLAY=${DISPLAY} \
 	-v ${XSOCK}:${XSOCK} \
 	-v ${HOME}/.Xauthority:/root/.Xauthority \
-	--privileged  --net=host --gpus all \
+	--privileged --gpus all \
 	-v ${PWD}/home:/root/home \
 	--name radi_melodic \
+	-p 8080:8080 -p 7681:7681 -p 2303:2303 -p 1905:1905 -p 8765:8765 -p 6080:6080 -p 1108:1108 \
 	radi:melodic
 
 exec_radi : ## Exec RADI
